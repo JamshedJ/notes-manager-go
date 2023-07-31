@@ -8,14 +8,17 @@ import (
 	"github.com/JamshedJ/todo/pkg/service"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"log"
 	"os"
 )
 
 func main() {
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+
 	if err := configs.InitConfigs(); err != nil {
-		log.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("error initializing configs: %s", err.Error())
 	}
 
 	if err := godotenv.Load(); err != nil {
@@ -31,7 +34,7 @@ func main() {
 		Password: os.Getenv("DB_PASSWORD"),
 	})
 	if err != nil {
-		log.Fatalf("failed initialize db: %s", err.Error())
+		logrus.Fatalf("failed initialize db: %s", err.Error())
 	}
 
 	repo := repository.NewRepository(db)
@@ -39,7 +42,7 @@ func main() {
 	handlers := handler.NewHandler(services)
 
 	srv := new(todo.Server)
-	if err := srv.Run(viper.GetString("8080"), handlers.InitRoutes()); err != nil {
-		log.Fatal("error occurred while running http server: ", err.Error())
+	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		logrus.Fatal("error occurred while running http server: ", err.Error())
 	}
 }

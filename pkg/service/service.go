@@ -1,8 +1,12 @@
 package service
 
-import "github.com/JamshedJ/todo/pkg/repository"
+import (
+	"github.com/JamshedJ/todo/models"
+	"github.com/JamshedJ/todo/pkg/repository"
+)
 
 type Authorization interface {
+	CreateUser(user models.User) (int, error)
 }
 
 type Task interface {
@@ -14,5 +18,7 @@ type Service struct {
 }
 
 func NewService(repo *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		Authorization: NewAuthService(repo.Authorization),
+	}
 }
