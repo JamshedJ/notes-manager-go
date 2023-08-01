@@ -24,7 +24,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.signIn)
 	}
 
-	task := router.Group("/task")
+	task := router.Group("/task", h.userIdentity)
 	{
 		task.POST("/", h.createTask)
 		task.GET("/", h.getTask)
